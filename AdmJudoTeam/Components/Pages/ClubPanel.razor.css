@@ -1,0 +1,175 @@
+/* ---------- Club identity card (hero) ---------- */
+
+.panel-hero {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    background-image: linear-gradient(135deg, var(--accent-indigo) 0%, var(--accent-violet) 100%);
+    border-radius: var(--radius-card);
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.18);
+}
+
+.panel-hero-logo {
+    flex: 0 0 auto;
+    width: 3.5rem;
+    height: 3.5rem;
+    object-fit: contain;
+    padding: 0.25rem;
+    background-color: var(--card);
+    border-radius: 12px;
+}
+
+.panel-hero-name {
+    color: #fff;
+    margin: 0;
+}
+
+/* White keeps 5.7:1 even at the violet end of the gradient. */
+.panel-hero-address {
+    color: #fff;
+    margin: 0.25rem 0 0;
+    font-weight: 500;
+}
+
+/* ---------- Stats row ---------- */
+
+.panel-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.875rem;
+    margin-bottom: 1.5rem;
+}
+
+.panel-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--card-accent, var(--accent-indigo));
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+}
+
+.panel-stat--atletas {
+    --card-accent: var(--accent-teal);
+}
+
+.panel-stat--torneos {
+    --card-accent: var(--accent-orange-dark);
+}
+
+.panel-stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+}
+
+.panel-stat-label {
+    color: var(--text-muted);
+}
+
+/* ---------- Quick-action cards ---------- */
+
+.panel-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+}
+
+@media (min-width: 641px) {
+    .panel-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .panel-actions-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.panel-action-card {
+    /* Per-section accent, overridable by modifiers below. */
+    --card-accent: var(--accent-indigo);
+    --card-chip-bg: var(--chip-indigo-bg);
+    --card-chip-ink: var(--accent-indigo);
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.125rem 1.25rem;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    color: var(--text);
+    cursor: pointer;
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.panel-action-card:hover,
+.panel-action-card:focus-visible {
+    color: var(--text);
+    border-color: var(--card-accent);
+    box-shadow: var(--shadow-card-hover);
+    text-decoration: none;
+}
+
+.panel-action-card--atletas {
+    --card-accent: var(--accent-teal);
+    --card-chip-bg: var(--chip-teal-bg);
+    --card-chip-ink: var(--accent-teal);
+}
+
+.panel-action-card--torneos {
+    --card-accent: var(--accent-orange-dark);
+    --card-chip-bg: var(--chip-orange-bg);
+    --card-chip-ink: var(--accent-orange-dark);
+}
+
+.panel-action-card--tatami {
+    --card-accent: var(--accent-rose);
+    --card-chip-bg: var(--chip-rose-bg);
+    --card-chip-ink: var(--accent-rose);
+}
+
+.panel-action-card--club {
+    --card-accent: var(--accent-indigo);
+    --card-chip-bg: var(--chip-indigo-bg);
+    --card-chip-ink: var(--accent-indigo);
+}
+
+.panel-action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    background-color: var(--card-chip-bg);
+    border-radius: var(--radius-control);
+    color: var(--card-chip-ink);
+}
+
+.panel-action-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.panel-action-title {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+}
+
+.panel-action-text {
+    margin: 0;
+    color: var(--text-muted);
+}

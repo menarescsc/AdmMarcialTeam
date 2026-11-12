@@ -1,0 +1,95 @@
+@page "/tatami"
+@implements IDisposable
+@inject TatamiModeViewModel VM
+@inject NavigationManager Navigation
+
+<h1>Modo Tatami</h1>
+
+<p class="text-muted">
+    @VM.SessionLabel — presentes: <strong>@VM.PresentCount</strong> · ausentes: <strong>@VM.AbsentCount</strong>
+</p>
+
+<div class="card mb-3">
+    <div class="card-body text-center">
+        <p class="display-4 mb-2">@VM.TimeLabel</p>
+        <p class="mb-2">Ronda @VM.Round · duración @VM.DurationLabel</p>
+        <div class="btn-group mb-3" role="group" aria-label="Duración de la ronda">
+            <button class="btn btn-outline-secondary" @onclick="() => VM.SetRoundDurationCommand.Execute(3)">3 min</button>
+            <button class="btn btn-outline-secondary" @onclick="() => VM.SetRoundDurationCommand.Execute(5)">5 min</button>
+            <button class="btn btn-outline-secondary" @onclick="() => VM.SetRoundDurationCommand.Execute(7)">7 min</button>
+        </div>
+        <div>
+            <button class="btn btn-success btn-lg me-2" disabled="@VM.IsTimerRunning"
+                    @onclick="() => VM.HajimeCommand.ExecuteAsync(null)">Hajime</button>
+            <button class="btn btn-warning btn-lg me-2" disabled="@(!VM.IsTimerRunning)"
+                    @onclick="() => VM.MatteCommand.ExecuteAsync(null)">Matte</button>
+            <button class="btn btn-outline-dark btn-lg" @onclick="() => VM.ResetTimerCommand.Execute(null)">Reiniciar</button>
+        </div>
+    </div>
+</div>
+
+<h2>Asistencia</h2>
+
+@if (VM.IsBusy)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (VM.Rows.Count == 0)
+{
+    <p>No hay atletas activos cargados.</p>
+}
+else
+{
+    <ul class="list-group mb-3">
+        @foreach (var row in VM.Rows)
+        {
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong>@row.FullName</strong>
+                    <button class="btn btn-lg @(row.Present ? "btn-success" : "btn-outline-secondary")"
+                            @onclick="() => VM.ToggleAttendanceCommand.ExecuteAsync(row)">
+                        @(row.Present ? "Presente ✓" : "Ausente")
+                    </button>
+                </div>
+                <div class="input-group mt-2">
+                    <input class="form-control" placeholder="Observación técnica" @bind="row.Observation" />
+                    <button class="btn btn-outline-primary" @onclick="() => VM.SaveObservationCommand.ExecuteAsync(row)">Guardar</button>
+                </div>
+            </li>
+        }
+    </ul>
+}
+
+@if (!string.IsNullOrEmpty(VM.StatusMessage))
+{
+    <div class="app-alert @(VM.StatusIsError ? "app-alert-danger" : "app-alert-success")" role="alert">
+        <span class="app-alert-icon" aria-hidden="true"></span>
+        <span><strong class="app-alert-label">@(VM.StatusIsError ? "Error." : "Correcto.")</strong> @VM.StatusMessage</span>
+    </div>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        if (!VM.HasSelectedClub)
+        {
+            Navigation.NavigateTo("");
+            return;
+        }
+
+        VM.PropertyChanged += OnViewModelChanged;
+        await VM.LoadCommand.ExecuteAsync(null);
+    }
+
+    private void OnViewModelChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // El cronómetro notifica desde un timer: refrescar la vista.
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        VM.PropertyChanged -= OnViewModelChanged;
+        VM.Dispose();
+    }
+}

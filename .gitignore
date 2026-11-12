@@ -361,3 +361,19 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Project-specific: internal documents, never commit
+AGENTS.md
+Agente Prompt*.md
+
+# Security-sensitive artifacts (athlete personal data lives in the app DB)
+*.db3
+*.sqlite
+*.keystore
+*.jks
+*.p12
+*.pem
+.env*
+google-services.json
+GoogleService-Info.plist
+secrets.json

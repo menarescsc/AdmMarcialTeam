@@ -1,0 +1,129 @@
+.home-lead {
+    max-width: 42rem;
+    color: var(--text-muted);
+    font-size: 1.0625rem;
+}
+
+/* ---------- Club selector list ---------- */
+
+.home-clubs-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+    margin: 1.25rem 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 641px) {
+    .home-clubs-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.club-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    min-height: 44px;
+    padding: 1rem 1.25rem;
+    text-align: left;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    color: var(--text);
+    cursor: pointer;
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.club-card:hover,
+.club-card:focus-visible {
+    border-color: var(--accent-indigo);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.club-card-logo {
+    flex: 0 0 auto;
+    width: 3rem;
+    height: 3rem;
+    object-fit: contain;
+    padding: 0.25rem;
+    background-color: var(--chip-indigo-bg);
+    border-radius: 12px;
+}
+
+.club-card-logo--placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-indigo);
+}
+
+.club-card-logo--placeholder svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.club-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+}
+
+.club-card-name {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.club-card-address {
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+}
+
+.club-card-chevron {
+    flex: 0 0 auto;
+    margin-left: auto;
+    color: var(--text-muted);
+}
+
+.club-card-chevron svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* ---------- Add-club CTA ---------- */
+
+.home-add-club {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+}
+
+.home-add-club-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+/* ---------- Offline note ---------- */
+
+.home-offline-note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    color: var(--text-muted);
+}
+
+.home-offline-icon {
+    flex: 0 0 auto;
+    width: 1.25rem;
+    height: 1.25rem;
+}

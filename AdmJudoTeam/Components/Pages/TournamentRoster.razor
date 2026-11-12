@@ -1,0 +1,147 @@
+@page "/torneos"
+@inject TournamentRosterViewModel VM
+@inject NavigationManager Navigation
+
+<h1>Inscripciones al torneo</h1>
+
+<details class="mb-3">
+    <summary>Nuevo campeonato</summary>
+    <div class="row g-3 mt-1" style="max-width: 48rem;">
+        <div class="col-md-6">
+            <label class="form-label" for="t-name">Nombre *</label>
+            <input id="t-name" class="form-control" @bind="VM.Draft.Name" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="t-location">Ubicación</label>
+            <input id="t-location" class="form-control" @bind="VM.Draft.Location" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="t-start">Fecha de inicio</label>
+            <input id="t-start" class="form-control" type="date" @bind="VM.Draft.StartDate" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="t-weighin">Fecha del pesaje oficial</label>
+            <input id="t-weighin" class="form-control" type="date" @bind="VM.Draft.WeighInDate" />
+        </div>
+        <div class="col-12">
+            <label class="form-label" for="t-notes">Notas</label>
+            <textarea id="t-notes" class="form-control" rows="2" @bind="VM.Draft.Notes"></textarea>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary" @onclick="() => VM.SaveTournamentCommand.ExecuteAsync(null)">Guardar campeonato</button>
+        </div>
+    </div>
+</details>
+
+@if (VM.IsBusy)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (VM.Tournaments.Count == 0)
+{
+    <p>No hay torneos cargados todavía.</p>
+    <p>Cree un campeonato para gestionar inscripciones y pesajes.</p>
+}
+else
+{
+    <div class="mb-3">
+        <label class="form-label" for="tournament-select">Torneo</label>
+        <select id="tournament-select" class="form-select" @bind="VM.SelectedTournamentId" @bind:after="LoadRosterAsync">
+            @foreach (var tournament in VM.Tournaments)
+            {
+                <option value="@tournament.Id">@tournament.Name — pesaje @tournament.WeighInDate.ToString("dd/MM/yyyy")</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <button class="btn btn-outline-dark" @onclick="() => VM.GenerateReportCommand.ExecuteAsync(null)">Generar nómina PDF</button>
+        <button class="btn btn-outline-secondary ms-2" disabled="@(VM.LastReportPath is null)"
+                @onclick="() => VM.ShareReportCommand.ExecuteAsync(null)">Compartir</button>
+        @if (VM.LastReportPath is not null)
+        {
+            <span class="ms-2 text-muted">Última nómina: @System.IO.Path.GetFileName(VM.LastReportPath)</span>
+        }
+    </div>
+
+    @if (VM.Roster.Count == 0)
+    {
+        <p>No hay atletas activos cargados.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Atleta</th>
+                        <th>Categoría</th>
+                        <th>Peso actual</th>
+                        <th>Límite</th>
+                        <th>Diferencia</th>
+                        <th>Inscripción</th>
+                        <th>Objetivos tácticos</th>
+                    </tr>
+                </thead>
+            <tbody>
+                @foreach (var row in VM.Roster)
+                {
+                    <tr>
+                        <td>@row.FullName</td>
+                        <td>@row.CategoryLabel</td>
+                        <td>@row.WeightLabel</td>
+                        <td>@row.LimitLabel</td>
+                        <td>
+                            @if (row.WeightDiff is null)
+                            {
+                                <span class="text-muted">@row.DiffLabel</span>
+                            }
+                            else if (row.IsOverweight)
+                            {
+                                <span class="badge text-bg-danger">@row.DiffLabel sobre el límite</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-success">@row.DiffLabel</span>
+                            }
+                        </td>
+                        <td>
+                            <input type="checkbox" class="form-check-input" checked="@row.IsEnrolled"
+                                   @onchange="() => VM.ToggleEnrollmentCommand.ExecuteAsync(row)" />
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <input class="form-control" placeholder="Objetivos tácticos" @bind="row.TacticalGoals" />
+                                <button class="btn btn-outline-primary" @onclick="() => VM.SaveGoalsCommand.ExecuteAsync(row)">Guardar</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            </table>
+        </div>
+    }
+}
+
+@if (!string.IsNullOrEmpty(VM.StatusMessage))
+{
+    <div class="app-alert @(VM.StatusIsError ? "app-alert-danger" : "app-alert-success")" role="alert">
+        <span class="app-alert-icon" aria-hidden="true"></span>
+        <span><strong class="app-alert-label">@(VM.StatusIsError ? "Error." : "Correcto.")</strong> @VM.StatusMessage</span>
+    </div>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        if (!VM.HasSelectedClub)
+        {
+            Navigation.NavigateTo("");
+            return;
+        }
+
+        await VM.LoadCommand.ExecuteAsync(null);
+    }
+
+    private Task LoadRosterAsync() => VM.LoadRosterCommand.ExecuteAsync(null);
+}
